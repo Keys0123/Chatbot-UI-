@@ -1,4 +1,4 @@
-region       = "us-east-2"
+region       = "ap-southt-1"
 profile      = "default"
 
 cluster_name = "dev-eks"
