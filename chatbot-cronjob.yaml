@@ -1,0 +1,28 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: chatbot-cronjob
+  namespace: default
+spec:
+  schedule: "0 */10 * * *"  # Every 10 hours
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: mongodb-backup
+            image: mongo:6.0
+            command:
+              - /bin/sh
+              - -c
+              - >
+                mongodump --uri="mongodb://localhost:27017/chatbot-db" --out=/backup/$(date +\%F_\%H-%M)
+            volumeMounts:
+            - name: backup-volume
+              mountPath: /backup
+          restartPolicy: OnFailure
+          volumes:
+          - name: backup-volume
+            hostPath:
+              path: /mnt/data/chatbot-cronjob
+              type: DirectoryOrCreate
